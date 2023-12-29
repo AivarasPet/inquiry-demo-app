@@ -1,0 +1,21 @@
+.modal-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* This ensures that the content and actions are spaced out */
+    height: 100%; /* Set the height to use the full available space */
+  }
+  
+  .full-width-input {
+    width: 100%;
+  }
+  
+  .full-width-input + .full-width-input {
+    margin-top: 16px;
+  }
+  
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end; /* Aligns buttons to the right */
+    padding: 10px; /* Optional padding for aesthetic spacing */
+  }
+  
