@@ -33,22 +33,22 @@ namespace InquiryStatusUpdater
                     IEnumerable<Inquiry> issuedInquiries = inquiriesService
                         .Search(new InquirySearchPredicate()
                         {
-                            InquiryStatus = InquiryStatus.Completed
+                            InquiryStatus = InquiryStatus.Issued
                         })
                         .OrderByDescending(q => q.CreationDate);
 
                     if (issuedInquiries.Any())
                     {
                         Inquiry inquiry = issuedInquiries.First();
-                        //if ((DateTimeOffset.UtcNow - inquiry.CreationDate).TotalSeconds >= _statusChangeDelayInS)
-                        //{
-                        inquiry.Status = InquiryStatus.Completed;
-                        inquiriesService.Save(inquiry);
+                        if ((DateTimeOffset.UtcNow - inquiry.CreationDate).Seconds >= _statusChangeDelayInS)
+                        {
+                            inquiry.Status = InquiryStatus.Issued;
+                            inquiriesService.Save(inquiry);
 
-                        await notificationHubContext.Clients
-                            .User(inquiry.UserId.ToString())
-                            .SendAsync(_notificationTopic, inquiry.Id);
-                        //}
+                            await notificationHubContext.Clients
+                                .User(inquiry.UserId.ToString())
+                                .SendAsync(_notificationTopic, inquiry.Id);
+                        }
                     }
 
                     await Task.Delay(_statusSetterWorkerDelayInMs, stoppingToken);

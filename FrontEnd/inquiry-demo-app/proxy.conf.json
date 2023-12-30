@@ -1,0 +1,18 @@
+{
+    "/auth": {
+      "target": "https://localhost:44327",
+      "secure": false,
+      "changeOrigin": true
+    },
+    "/inquiries": {
+      "target": "https://localhost:44327",
+      "secure": false,
+      "changeOrigin": true
+    },
+    "/notification": {
+      "target": "https://localhost:44328",
+      "secure": false,
+      "changeOrigin": true
+    }
+  }
+  

@@ -9,9 +9,8 @@ export const APP_CONFIG = new InjectionToken<IConfig>('environment.configuration
 
 export const environment = {
   production: false,
-  BASE_URL: 'https://localhost:44327',
-  get AUTH_URL() { return this.BASE_URL + '/auth'; },
-  get SIGNALR_URL() { return this.BASE_URL + '/notificationhub'; },
-  get INQUIRIES_URL() { return this.BASE_URL + '/inquiries'; },
+  get AUTH_URL() { return '/auth'; },
+  get SIGNALR_URL() { return '/notification'; },
+  get INQUIRIES_URL() { return '/inquiries'; },
   INQUIRIES_REFRESH_TOPIC: 'refresh-inquiries'
 };

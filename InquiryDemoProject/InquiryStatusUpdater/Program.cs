@@ -4,9 +4,9 @@ using InquiryAPI.Repositories;
 using InquiryAPI.Services.InquiriesService;
 using InquiryAPI.Services.UserService;
 using InquiryAPI.Services.UserTokenService;
+using InquiryStatusUpdater;
 using InquiryStatusUpdater.SignalRHubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -14,16 +14,11 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 // Add services to the container.
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<IUserIdProvider, SignalRUserIdProvider>();
-
-builder.Services.AddCors(options => options.AddDefaultPolicy(b =>
-{
-    b.AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader();
-}));
+builder.Services.AddControllers();
 
 builder.Services.Configure<AppConfiguration>(builder.Configuration);
 AppConfiguration config = builder.Configuration.Get<AppConfiguration>();
@@ -76,19 +71,27 @@ builder.Services.AddScoped<IInquiriesRepository, InquiriesRepository>();
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<IInquiriesService, InquiriesService>();
 builder.Services.AddScoped<IUserTokenService, UserTokenService>();
-
+builder.Services.AddHostedService<Worker>();
 
 builder.Services.AddSignalR();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseHttpsRedirection();
 app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseWebSockets();
 
+app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
 app.UseEndpoints(endpoints =>
 {
     // Configure SignalR endpoints
-    endpoints.MapHub<NotificationHub>("/notificationHub");
+    endpoints.MapHub<NotificationHub>("/" + config.SignalRConfiguration.SignalRConnectionPath);
 });
 
 app.Run();

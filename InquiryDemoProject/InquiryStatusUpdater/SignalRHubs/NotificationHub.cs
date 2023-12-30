@@ -6,5 +6,6 @@ namespace InquiryStatusUpdater.SignalRHubs
     [Authorize]
     public class NotificationHub : Hub
     {
+
     }
 }
