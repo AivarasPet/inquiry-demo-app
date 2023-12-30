@@ -21,10 +21,10 @@ export class SignalRService {
     })
     .configureLogging(signalR.LogLevel.Information)
     .build();
-
+   
     this.hubConnection
       .start()
-      .then(() => alert('dsdsd'))
+      .then(() => console.log(132))
       .catch(err => console.log('Error while starting connection: ' + err))
   }
   

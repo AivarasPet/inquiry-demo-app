@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { SignalRService } from '../signalr.service';
 import { environment } from 'src/environments/environment';
 import { MatDialog } from '@angular/material/dialog';
@@ -18,7 +18,8 @@ export class HomeComponent implements OnInit {
 
   constructor(private http: HttpClient,
     private signalRService: SignalRService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private zone: NgZone
     ) { }
 
   displayedColumns: string[] = ['id', 'date', 'inquiryType', 'status'];
@@ -63,7 +64,9 @@ export class HomeComponent implements OnInit {
   private setupDataListener(): void {
     this.signalRService.startConnection();
     this.signalRService.addTransferDataListener(environment.INQUIRIES_REFRESH_TOPIC, (data) => {
-      this.loadInquiries();
+      this.zone.run(() => {
+        this.loadInquiries();
+      });
     });
   }
 

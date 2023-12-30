@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\InquiryAPI\InquiryAPI.csproj" />
+    <ProjectReference Include="..\InquiryStatusUpdater\InquiryStatusUpdater.csproj" />
   </ItemGroup>
 
 </Project>

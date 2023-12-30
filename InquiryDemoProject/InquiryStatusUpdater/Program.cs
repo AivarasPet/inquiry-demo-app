@@ -52,11 +52,11 @@ builder.Services.AddAuthentication(options =>
                 var accessToken = context.Request.Query["access_token"];
                 var path = context.HttpContext.Request.Path;
 
-                if (!string.IsNullOrEmpty(accessToken) &&
-                    path.StartsWithSegments(config.SignalRConfiguration.SignalRConnectionPath))
-                {
-                    context.Token = accessToken;
-                }
+                //     if (!string.IsNullOrEmpty(accessToken) && path.Value != null &&
+                //         path.Value.StartsWith(config.SignalRConfiguration.SignalRConnectionPath))
+                //     {
+                context.Token = accessToken;
+                //     }
             }
             return Task.CompletedTask;
         }
@@ -91,7 +91,7 @@ app.UseEndpoints(endpoints =>
 app.UseEndpoints(endpoints =>
 {
     // Configure SignalR endpoints
-    endpoints.MapHub<NotificationHub>("/" + config.SignalRConfiguration.SignalRConnectionPath);
+    endpoints.MapHub<NotifyHub>("/" + config.SignalRConfiguration.SignalRConnectionPath);
 });
 
 app.Run();

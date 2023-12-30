@@ -5,7 +5,7 @@ import { environment } from 'src/environments/environment';
 
 interface InquiryDTO {
   message: string;
-  inquiryType: number;
+  type: number;
 }
 
 @Component({
@@ -16,7 +16,7 @@ interface InquiryDTO {
 export class AddInquiryModalComponent implements OnInit {
 
   @Output() requestSuccess = new EventEmitter<any>(); 
-  inquiryDto: InquiryDTO = { message: '', inquiryType: 0 };
+  inquiryDto = { message: '', type: '' };
   inquiryTypes: any;  
   
   constructor(private http: HttpClient, 
@@ -25,6 +25,18 @@ export class AddInquiryModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadEnums();
+  }
+
+  get selectedType() {
+    return this.inquiryDto.type;
+  }
+
+  set selectedType(value: string) {
+      this.inquiryDto.type = value;
+  }
+
+  onTypeChange(value: string) {
+      this.selectedType = value;
   }
 
   private loadEnums() {

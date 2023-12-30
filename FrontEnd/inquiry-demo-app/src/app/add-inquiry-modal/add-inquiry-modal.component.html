@@ -3,16 +3,15 @@
   <form>
     <mat-form-field class="full-width-input">
       <mat-label>Message</mat-label>
-      <input matInput [(ngModel)]="inquiryDto.message">
+      <input matInput [(ngModel)]="inquiryDto.message" name="message">
     </mat-form-field>
-
     <mat-form-field class="full-width-input">
       <mat-label>Inquiry Type</mat-label>
-      <mat-select [(ngModel)]="inquiryDto.inquiryType">
+      <mat-select [value]="selectedType" (valueChange)="onTypeChange($event)">
         <mat-option *ngFor="let type of inquiryTypes" [value]="type.value">
-          {{type.label}}
+            {{ type.label }}
         </mat-option>
-      </mat-select>
+    </mat-select>    
     </mat-form-field>
   </form>
 </mat-dialog-content>

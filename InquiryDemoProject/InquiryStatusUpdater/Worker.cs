@@ -27,28 +27,28 @@ namespace InquiryStatusUpdater
             using (var scope = _serviceProvider.CreateScope())
             {
                 IInquiriesService inquiriesService = scope.ServiceProvider.GetRequiredService<IInquiriesService>();
-                IHubContext<NotificationHub> notificationHubContext = scope.ServiceProvider.GetRequiredService<IHubContext<NotificationHub>>();
+                IHubContext<NotifyHub> NotifyHubContext = scope.ServiceProvider.GetRequiredService<IHubContext<NotifyHub>>();
                 while (!stoppingToken.IsCancellationRequested)
                 {
                     IEnumerable<Inquiry> issuedInquiries = inquiriesService
                         .Search(new InquirySearchPredicate()
                         {
-                            InquiryStatus = InquiryStatus.Completed
+                            InquiryStatus = InquiryStatus.Issued
                         })
                         .OrderByDescending(q => q.CreationDate);
 
                     if (issuedInquiries.Any())
                     {
                         Inquiry inquiry = issuedInquiries.First();
-                        //if ((DateTimeOffset.UtcNow - inquiry.CreationDate).TotalSeconds >= _statusChangeDelayInS)
-                        //{
-                        inquiry.Status = InquiryStatus.Completed;
-                        inquiriesService.Save(inquiry);
+                        if ((DateTimeOffset.UtcNow - inquiry.CreationDate).TotalSeconds >= _statusChangeDelayInS)
+                        {
+                            inquiry.Status = InquiryStatus.Completed;
+                            inquiriesService.Save(inquiry);
 
-                        await notificationHubContext.Clients
-                            .User(inquiry.UserId.ToString())
-                            .SendAsync(_notificationTopic, inquiry.Id);
-                        //}
+                            await NotifyHubContext.Clients
+                                .User(inquiry.UserId.ToString())
+                                .SendAsync(_notificationTopic, inquiry.Id);
+                        }
                     }
 
                     await Task.Delay(_statusSetterWorkerDelayInMs, stoppingToken);

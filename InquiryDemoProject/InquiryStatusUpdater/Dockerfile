@@ -7,16 +7,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["InquiryAPI/InquiryAPI.csproj", "InquiryAPI/"]
-RUN dotnet restore "InquiryAPI/InquiryAPI.csproj"
+COPY ["InquiryStatusUpdater/InquiryStatusUpdater.csproj", "InquiryStatusUpdater/"]
+RUN dotnet restore "InquiryStatusUpdater/InquiryStatusUpdater.csproj"
 COPY . .
-WORKDIR "/src/InquiryAPI"
-RUN dotnet build "InquiryAPI.csproj" -c Release -o /app/build
+WORKDIR "/src/InquiryStatusUpdater"
+RUN dotnet build "InquiryStatusUpdater.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "InquiryAPI.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "InquiryStatusUpdater.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "InquiryAPI.dll"]
+ENTRYPOINT ["dotnet", "InquiryStatusUpdater.dll"]
