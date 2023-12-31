@@ -1,4 +1,4 @@
-﻿namespace InquiryAPI.Configuration
+﻿namespace InquiryStatusUpdater.Configuration
 {
     public class AppConfiguration
     {
@@ -6,5 +6,6 @@
         public string JwtSecretKey { get; set; }
         public int StatusSetterWorkerDelayInMs { get; set; }
         public int StatusChangeDelayInS { get; set; }
+        public SignalRConfiguration SignalRConfiguration { get; set; }
     }
 }

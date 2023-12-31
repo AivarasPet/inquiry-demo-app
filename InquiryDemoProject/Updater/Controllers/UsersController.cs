@@ -1,5 +1,5 @@
-﻿using InquiryAPI.DomainObjects.Users;
-using InquiryAPI.Services.UserService;
+﻿using Application.Services.UserService;
+using Domain.DomainObjects.Users;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Updater.Controllers

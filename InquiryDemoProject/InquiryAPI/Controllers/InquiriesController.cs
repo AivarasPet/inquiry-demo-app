@@ -1,6 +1,6 @@
-﻿using InquiryAPI.DomainObjects.Inquiries;
-using InquiryAPI.Services.InquiriesService;
-using InquiryAPI.Services.UserTokenService;
+﻿using Application.Services.InquiriesService;
+using Application.Services.UserTokenService;
+using Domain.DomainObjects.Inquiries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

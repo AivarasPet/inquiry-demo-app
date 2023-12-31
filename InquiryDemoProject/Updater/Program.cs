@@ -1,7 +1,8 @@
-using InquiryAPI.BaseDbContexts;
+using Application.Repositories;
+using Application.Services.UserService;
+using Infrastructure.BaseDbContexts;
+using Infrastructure.Repositories;
 using InquiryAPI.Configuration;
-using InquiryAPI.Repositories;
-using InquiryAPI.Services.UserService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;

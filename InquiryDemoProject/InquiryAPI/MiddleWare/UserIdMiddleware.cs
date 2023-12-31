@@ -1,4 +1,4 @@
-﻿using InquiryAPI.Services.UserTokenService;
+﻿using Application.Services.UserTokenService;
 
 namespace InquiryAPI.Middleware
 {

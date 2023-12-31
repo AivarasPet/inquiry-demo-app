@@ -1,10 +1,11 @@
-using InquiryAPI.BaseDbContexts;
-using InquiryAPI.Configuration;
-using InquiryAPI.Repositories;
-using InquiryAPI.Services.InquiriesService;
-using InquiryAPI.Services.UserService;
-using InquiryAPI.Services.UserTokenService;
+using Application.Repositories;
+using Application.Services.InquiriesService;
+using Application.Services.UserService;
+using Application.Services.UserTokenService;
+using Infrastructure.BaseDbContexts;
+using Infrastructure.Repositories;
 using InquiryStatusUpdater;
+using InquiryStatusUpdater.Configuration;
 using InquiryStatusUpdater.SignalRHubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.SignalR;

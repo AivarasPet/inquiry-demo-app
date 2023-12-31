@@ -1,6 +1,6 @@
-using InquiryAPI.Configuration;
-using InquiryAPI.DomainObjects.Inquiries;
-using InquiryAPI.Services.InquiriesService;
+using Application.Services.InquiriesService;
+using Domain.DomainObjects.Inquiries;
+using InquiryStatusUpdater.Configuration;
 using InquiryStatusUpdater.SignalRHubs;
 using Microsoft.AspNetCore.SignalR;
 
@@ -24,7 +24,7 @@ namespace InquiryStatusUpdater
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            using (var scope = _serviceProvider.CreateScope())
+            using (IServiceScope scope = _serviceProvider.CreateScope())
             {
                 IInquiriesService inquiriesService = scope.ServiceProvider.GetRequiredService<IInquiriesService>();
                 IHubContext<NotifyHub> NotifyHubContext = scope.ServiceProvider.GetRequiredService<IHubContext<NotifyHub>>();

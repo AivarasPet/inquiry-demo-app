@@ -1,7 +1,7 @@
-﻿using InquiryAPI.Configuration;
-using InquiryAPI.DomainObjects.Users;
-using InquiryAPI.Services.UserService;
-using InquiryAPI.Utils;
+﻿using Application.Services.UserService;
+using Application.Utils;
+using Domain.DomainObjects.Users;
+using InquiryAPI.Configuration;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InquiryAPI.Controllers
