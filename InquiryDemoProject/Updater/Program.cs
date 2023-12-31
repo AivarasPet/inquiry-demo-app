@@ -2,61 +2,49 @@ using Application.Repositories;
 using Application.Services.UserService;
 using Infrastructure.BaseDbContexts;
 using Infrastructure.Repositories;
-using InquiryAPI.Configuration;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Updater.Configuration;
 
-var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.Configure<AppConfiguration>(builder.Configuration);
-AppConfiguration config = builder.Configuration.Get<AppConfiguration>();
-
-
-builder.Services.AddDbContext<InquiryDbContext>(options =>
+namespace Updater
 {
-    options.UseNpgsql(config.ConnectionString);
-});
-
-builder.Services.AddScoped<IUsersRepository, UsersRepository>();
-builder.Services.AddScoped<IUsersService, UsersService>();
-
-var key = Encoding.ASCII.GetBytes(config.JwtSecretKey);
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.RequireHttpsMetadata = false;
-    options.SaveToken = true;
-    options.TokenValidationParameters = new TokenValidationParameters
+    class Program
     {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(key),
-        ValidateIssuer = false,
-        ValidateAudience = false
-    };
-});
+        static void Main(string[] args)
+        {
+            var builder = WebApplication.CreateBuilder(args);
 
-var app = builder.Build();
+            builder.Services.AddControllers();
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+            builder.Services.Configure<AppConfiguration>(builder.Configuration);
+            AppConfiguration config = builder.Configuration.Get<AppConfiguration>();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+            builder.Services.AddDbContext<InquiryDbContext>(options =>
+            {
+                options.UseNpgsql(config.ConnectionString);
+            });
+
+            builder.Services.AddScoped<IUsersRepository, UsersRepository>();
+            builder.Services.AddScoped<IUsersService, UsersService>();
+
+            var key = Encoding.ASCII.GetBytes(config.JwtSecretKey);
+
+            var app = builder.Build();
+
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
+
+            app.UseHttpsRedirection();
+
+            app.UseAuthorization();
+
+            app.MapControllers();
+
+            app.Run();
+        }
+    }
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();

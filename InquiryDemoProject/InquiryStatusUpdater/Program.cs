@@ -4,7 +4,6 @@ using Application.Services.UserService;
 using Application.Services.UserTokenService;
 using Infrastructure.BaseDbContexts;
 using Infrastructure.Repositories;
-using InquiryStatusUpdater;
 using InquiryStatusUpdater.Configuration;
 using InquiryStatusUpdater.SignalRHubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,86 +12,86 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-var builder = WebApplication.CreateBuilder(args);
-
-
-// Add services to the container.
-builder.Services.AddSignalR();
-builder.Services.AddSingleton<IUserIdProvider, SignalRUserIdProvider>();
-builder.Services.AddControllers();
-
-builder.Services.Configure<AppConfiguration>(builder.Configuration);
-AppConfiguration config = builder.Configuration.Get<AppConfiguration>();
-builder.Services.AddSingleton<AppConfiguration>(config);
-
-var key = Encoding.ASCII.GetBytes(config.JwtSecretKey);
-
-//copy the same auth
-builder.Services.AddAuthentication(options =>
+namespace InquiryStatusUpdater
 {
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.RequireHttpsMetadata = false;
-    options.SaveToken = true;
-    options.TokenValidationParameters = new TokenValidationParameters
+    class Program
     {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(key),
-        ValidateIssuer = false,
-        ValidateAudience = false
-    };
-    options.Events = new JwtBearerEvents
-    {
-        OnMessageReceived = context =>
+        static void Main(string[] args)
         {
-            if (config.SignalRConfiguration.SignalRConnectionPath != null)
+            var builder = WebApplication.CreateBuilder(args);
+
+            // Add services to the container.
+            builder.Services.AddSignalR();
+            builder.Services.AddSingleton<IUserIdProvider, SignalRUserIdProvider>();
+            builder.Services.AddControllers();
+
+            builder.Services.Configure<AppConfiguration>(builder.Configuration);
+            AppConfiguration config = builder.Configuration.Get<AppConfiguration>();
+            builder.Services.AddSingleton<AppConfiguration>(config);
+
+            var key = Encoding.ASCII.GetBytes(config.JwtSecretKey);
+
+            // Copy the same auth
+            builder.Services.AddAuthentication(options =>
             {
-                var accessToken = context.Request.Query["access_token"];
-                var path = context.HttpContext.Request.Path;
-
-                //     if (!string.IsNullOrEmpty(accessToken) && path.Value != null &&
-                //         path.Value.StartsWith(config.SignalRConfiguration.SignalRConnectionPath))
-                //     {
-                context.Token = accessToken;
-                //     }
-            }
-            return Task.CompletedTask;
-        }
-    };
-});
-
-builder.Services.AddDbContext<InquiryDbContext>(options =>
-    options.UseNpgsql(config.ConnectionString));
-
-builder.Services.AddScoped<IUsersRepository, UsersRepository>();
-builder.Services.AddScoped<IInquiriesRepository, InquiriesRepository>();
-builder.Services.AddScoped<IUsersService, UsersService>();
-builder.Services.AddScoped<IInquiriesService, InquiriesService>();
-builder.Services.AddScoped<IUserTokenService, UserTokenService>();
-builder.Services.AddHostedService<Worker>();
-
-builder.Services.AddSignalR();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-app.UseHttpsRedirection();
-app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
-app.UseWebSockets();
-
-app.UseEndpoints(endpoints =>
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
             {
-                endpoints.MapControllers();
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        if (config.SignalRConfiguration.SignalRConnectionPath != null)
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+                            var path = context.HttpContext.Request.Path;
+
+                            context.Token = accessToken;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             });
-app.UseEndpoints(endpoints =>
-{
-    // Configure SignalR endpoints
-    endpoints.MapHub<NotifyHub>("/" + config.SignalRConfiguration.SignalRConnectionPath);
-});
 
-app.Run();
+            builder.Services.AddDbContext<InquiryDbContext>(options =>
+                options.UseNpgsql(config.ConnectionString));
+
+            builder.Services.AddScoped<IUsersRepository, UsersRepository>();
+            builder.Services.AddScoped<IInquiriesRepository, InquiriesRepository>();
+            builder.Services.AddScoped<IUsersService, UsersService>();
+            builder.Services.AddScoped<IInquiriesService, InquiriesService>();
+            builder.Services.AddScoped<IUserTokenService, UserTokenService>();
+            builder.Services.AddHostedService<Worker>();
+
+            builder.Services.AddSignalR();
+
+            var app = builder.Build();
+
+            // Configure the HTTP request pipeline.
+            app.UseHttpsRedirection();
+            app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseWebSockets();
+
+            app.UseEndpoints(endpoints =>
+            {
+                // Configure SignalR endpoints
+                endpoints.MapHub<NotifyHub>("/" + config.SignalRConfiguration.SignalRConnectionPath);
+            });
+
+            app.Run();
+        }
+    }
+}

@@ -1,11 +1,11 @@
 {
     "/auth": {
-      "target": "https://localhost:44327",
+      "target": "http://localhost:5248",
       "secure": false,
       "changeOrigin": true
     },
     "/inquiries": {
-      "target": "https://localhost:44327",
+      "target": "http://localhost:5248",
       "secure": false,
       "changeOrigin": true
     },

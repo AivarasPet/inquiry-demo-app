@@ -8,18 +8,10 @@ services:
       POSTGRES_USER: test_user
       POSTGRES_PASSWORD: test_password
     ports:
-      - "5435:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  webapi:
-    build: 
-      context: ./InquiryDemoProject/InquiryAPI
-      dockerfile: Dockerfile
-    ports:
-      - "8000:80"
-    depends_on:
-      - postgres
-      
+
 volumes:
   postgres_data:
