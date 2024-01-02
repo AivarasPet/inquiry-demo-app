@@ -1,5 +1,5 @@
 export const environment = {
-  production: false,
+  production: true,
   get AUTH_URL() { return '/auth'; },
   get SIGNALR_URL() { return '/notify'; },
   get INQUIRIES_URL() { return '/inquiries'; },

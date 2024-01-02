@@ -1,5 +1,5 @@
 import { Component, NgZone, OnInit } from '@angular/core';
-import { SignalRService } from '../signalr.service';
+import { SignalRService } from '../../signalr.service';
 import { environment } from 'src/environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 import { AddInquiryModalComponent } from '../add-inquiry-modal/add-inquiry-modal.component';
