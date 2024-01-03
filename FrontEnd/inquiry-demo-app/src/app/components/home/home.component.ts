@@ -39,7 +39,7 @@ export class HomeComponent implements OnInit {
     .subscribe(({types, statuses}) => {
       this.inquiryTypes = types;
       this.inquiryStatuses = statuses;
-      this.loadInquiries();  // Call to load inquiries after enums are loaded
+      this.loadInquiries();
     }, error => {
       console.error('Error fetching enum data', error);
     });
@@ -74,7 +74,7 @@ export class HomeComponent implements OnInit {
     const dialogRef = this.dialog.open(AddInquiryModalComponent);
     const sub = dialogRef.componentInstance.requestSuccess.subscribe((response) => {
       this.loadInquiries();
-      sub.unsubscribe(); // Unsubscribe to avoid memory leaks
+      sub.unsubscribe(); 
     });
   }
 }

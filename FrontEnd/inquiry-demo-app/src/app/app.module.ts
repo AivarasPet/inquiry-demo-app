@@ -21,13 +21,15 @@ import { AddInquiryModalComponent } from './components/add-inquiry-modal/add-inq
 import { MatSelectModule } from '@angular/material/select';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { TokenInterceptor } from './interceptors/token.interceptor';
+import { HeaderComponent } from './components/header/header.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     HomeComponent,
-    AddInquiryModalComponent
+    AddInquiryModalComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule,
