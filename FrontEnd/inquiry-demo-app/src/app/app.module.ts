@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { LoginComponent } from './login/login.component';
+import { LoginComponent } from './components/login/login.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,18 +16,20 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { HomeComponent } from './home/home.component';
-import { AddInquiryModalComponent } from './add-inquiry-modal/add-inquiry-modal.component';
+import { HomeComponent } from './components/home/home.component';
+import { AddInquiryModalComponent } from './components/add-inquiry-modal/add-inquiry-modal.component';
 import { MatSelectModule } from '@angular/material/select';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { TokenInterceptor } from './interceptors/token.interceptor';
+import { HeaderComponent } from './components/header/header.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     HomeComponent,
-    AddInquiryModalComponent
+    AddInquiryModalComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule,

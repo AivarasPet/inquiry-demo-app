@@ -12,6 +12,46 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  inquiry_api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Release
+    build:
+      context: ./InquiryDemoProject
+      dockerfile: ./InquiryAPI/Dockerfile
+    depends_on:
+      - postgres
+    ports:
+      - "8001:80"
+
+  status_updater:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Release
+    build:
+      context: ./InquiryDemoProject
+      dockerfile: ./InquiryStatusUpdater/Dockerfile
+    depends_on:
+      - postgres
+    ports:
+      - "8002:80"
+
+  angular_app:
+    build:
+      context: ./FrontEnd/inquiry-demo-app
+      dockerfile: ./Dockerfile
+    ports:
+      - "4201:80"
+
+  nginx:
+    container_name: nginx-local
+    image: nginx:latest
+    ports:
+      - "4202:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - inquiry_api
+      - status_updater
+      - angular_app
 
 volumes:
   postgres_data:
