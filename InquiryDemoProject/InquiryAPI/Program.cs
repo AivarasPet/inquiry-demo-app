@@ -26,13 +26,6 @@ namespace InquiryAPI
             AppConfiguration config = builder.Configuration.Get<AppConfiguration>();
             builder.Services.AddSingleton<AppConfiguration>(config);
 
-            builder.Services.AddCors(options => options.AddDefaultPolicy(b =>
-            {
-                b.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader();
-            }));
-
             builder.Services.AddDbContext<InquiryDbContext>(options =>
             {
                 options.UseNpgsql(config.ConnectionString);

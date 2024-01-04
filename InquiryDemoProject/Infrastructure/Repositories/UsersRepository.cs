@@ -2,6 +2,7 @@
 using Domain.DomainObjects.Users;
 using Infrastructure.BaseDbContexts;
 using Infrastructure.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
@@ -14,17 +15,23 @@ namespace Infrastructure.Repositories
             _dbContext = dbContext;
         }
 
-        public void Delete(Guid id)
+        public async Task DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var entity = await _dbContext.UserEntities.FindAsync(id);
+            if (entity != null)
+            {
+                _dbContext.UserEntities.Remove(entity);
+                await _dbContext.SaveChangesAsync();
+            }
         }
 
-        public User GetById(Guid id)
+        public async Task<User> GetByIdAsync(Guid id)
         {
-            return Search(new UserSearchPredicate() { Id = id }).FirstOrDefault();
+            IEnumerable<User> users = await SearchAsync(new UserSearchPredicate() { Id = id });
+            return users.First();
         }
 
-        public User Save(User user)
+        public async Task<User> SaveAsync(User user)
         {
             UserEntity entity = null;
 
@@ -34,52 +41,36 @@ namespace Infrastructure.Repositories
                 {
                     Id = user.Id,
                 };
+                await _dbContext.UserEntities.AddAsync(entity);
             }
             else
             {
-                entity = _dbContext
-                    .UserEntities
-                    .First(e => e.Id == user.Id);
+                entity = await _dbContext.UserEntities.FirstAsync(e => e.Id == user.Id);
+                _dbContext.UserEntities.Update(entity);
             }
 
             entity.Username = user.Username;
             entity.Password = user.Password;
 
-            if (user.IsNew)
-            {
-                _dbContext
-                    .UserEntities
-                    .Add(entity);
-            }
-            else
-            {
-                _dbContext
-                     .UserEntities
-                     .Update(entity);
-            }
+            await _dbContext.SaveChangesAsync();
 
-            _dbContext
-                .SaveChanges();
-
-            return GetById(entity.Id);
+            return await GetByIdAsync(entity.Id);
         }
 
-        public IEnumerable<User> Search(UserSearchPredicate predicate)
+        public async Task<IEnumerable<User>> SearchAsync(UserSearchPredicate predicate)
         {
-            IQueryable<UserEntity> queryable = _dbContext
-                .UserEntities
+            IQueryable<UserEntity> queryable = _dbContext.UserEntities
                 .Where(q => (predicate.Id == null || predicate.Id == q.Id)
                     && (predicate.Username == null || predicate.Username == q.Username)
-                    && (predicate.Password == null || predicate.Password == q.Password)
-                );
+                    && (predicate.Password == null || predicate.Password == q.Password));
 
-            return queryable
+            return await queryable
                     .Select(entity => new User(entity.Id)
                     {
                         Username = entity.Username,
                         Password = entity.Password
                     })
-                   .ToList();
+                    .ToListAsync();
         }
     }
 }

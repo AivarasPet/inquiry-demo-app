@@ -12,14 +12,14 @@ namespace Application.Services.InquiriesService
             _inquiriesRepository = inquiriesRepository;
         }
 
-        public Inquiry Save(Inquiry domainObject)
+        public Task<Inquiry> SaveAsync(Inquiry domainObject)
         {
-            return _inquiriesRepository.Save(domainObject);
+            return _inquiriesRepository.SaveAsync(domainObject);
         }
 
-        public IEnumerable<Inquiry> Search(InquirySearchPredicate predicate)
+        public Task<IEnumerable<Inquiry>> SearchAsync(InquirySearchPredicate predicate)
         {
-            return _inquiriesRepository.Search(predicate);
+            return _inquiriesRepository.SearchAsync(predicate);
         }
     }
 }

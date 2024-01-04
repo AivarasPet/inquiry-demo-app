@@ -30,20 +30,19 @@ namespace InquiryStatusUpdater
                 IHubContext<NotifyHub> NotifyHubContext = scope.ServiceProvider.GetRequiredService<IHubContext<NotifyHub>>();
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                    IEnumerable<Inquiry> issuedInquiries = inquiriesService
-                        .Search(new InquirySearchPredicate()
+                    IEnumerable<Inquiry> issuedInquiries = await inquiriesService
+                        .SearchAsync(new InquirySearchPredicate()
                         {
                             InquiryStatus = InquiryStatus.Issued
-                        })
-                        .OrderByDescending(q => q.CreationDate);
+                        });
 
                     if (issuedInquiries.Any())
                     {
-                        Inquiry inquiry = issuedInquiries.First();
+                        Inquiry inquiry = issuedInquiries.OrderByDescending(q => q.CreationDate).First();
                         if ((DateTimeOffset.UtcNow - inquiry.CreationDate).TotalSeconds >= _statusChangeDelayInS)
                         {
                             inquiry.Status = InquiryStatus.Completed;
-                            inquiriesService.Save(inquiry);
+                            await inquiriesService.SaveAsync(inquiry);
 
                             await NotifyHubContext.Clients
                                 .User(inquiry.UserId.ToString())

@@ -25,11 +25,12 @@ namespace InquiryAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult Login([FromBody] LoginDTO loginDTO)
+        public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
         {
-            if (_userService.ValidateCredentials(loginDTO.Username, loginDTO.Password, out User validUser))
+            (bool, User) isUserValid = await _userService.ValidateCredentialsAsync(loginDTO.Username, loginDTO.Password);
+            if (isUserValid.Item1)
             {
-                var token = JwtUtils.GenerateJwtToken(validUser.Id, _jwtSecretKey);
+                var token = JwtUtils.GenerateJwtToken(isUserValid.Item2.Id, _jwtSecretKey);
                 return Ok(new { token });
             }
 

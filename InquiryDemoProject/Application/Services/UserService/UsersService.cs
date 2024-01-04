@@ -11,31 +11,34 @@ namespace Application.Services.UserService
         {
             _userRepository = userRepository;
         }
-        public IEnumerable<User> Search(UserSearchPredicate predicate)
+        public Task<IEnumerable<User>> SearchAsync(UserSearchPredicate predicate)
         {
-            return _userRepository.Search(predicate);
+            return _userRepository.SearchAsync(predicate);
         }
 
-        public User Save(User domainObject)
+        public Task<User> SaveAsync(User domainObject)
         {
             if (domainObject.IsNew)
             {
                 domainObject.Password = HashPassword(domainObject.Password);
             }
-            return _userRepository.Save(domainObject);
+            return _userRepository.SaveAsync(domainObject);
         }
 
-        public bool ValidateCredentials(string username, string password, out User user)
+        public async Task<(bool isValid, User user)> ValidateCredentialsAsync(string username, string password)
         {
-            IEnumerable<User> users = _userRepository.Search(new UserSearchPredicate()
+            IEnumerable<User> users = await _userRepository.SearchAsync(new UserSearchPredicate()
             {
                 Username = username,
             });
 
-            user = users.First();
+            var user = users.FirstOrDefault();
 
-            return users.Any() && VerifyPassword(password, user.Password);
+            bool isValid = user != null && VerifyPassword(password, user.Password);
+
+            return (isValid, user);
         }
+
 
         private string HashPassword(string password)
         {

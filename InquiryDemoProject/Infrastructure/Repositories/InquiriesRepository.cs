@@ -15,12 +15,14 @@ namespace Infrastructure.Repositories
             _dbContext = dbContext;
         }
 
-        public Inquiry GetById(Guid id)
+        public async Task<Inquiry> GetByIdAsync(Guid id)
         {
-            return Search(new InquirySearchPredicate() { Id = id }).FirstOrDefault();
+            IEnumerable<Inquiry> inquiries = await SearchAsync(new InquirySearchPredicate() { Id = id });
+            return inquiries.First();
         }
 
-        public Inquiry Save(Inquiry domainObject)
+
+        public async Task<Inquiry> SaveAsync(Inquiry domainObject)
         {
             InquiryEntity entity = null;
 
@@ -57,13 +59,13 @@ namespace Infrastructure.Repositories
                      .Update(entity);
             }
 
-            _dbContext
-                .SaveChanges();
+            await _dbContext
+                .SaveChangesAsync();
 
-            return GetById(entity.Id);
+            return GetByIdAsync(entity.Id).Result;
         }
 
-        public IEnumerable<Inquiry> Search(InquirySearchPredicate predicate)
+        public async Task<IEnumerable<Inquiry>> SearchAsync(InquirySearchPredicate predicate)
         {
             IQueryable<InquiryEntity> queryable = _dbContext
                 .InquiryEntities
@@ -78,7 +80,7 @@ namespace Infrastructure.Repositories
                     .ToList();
         }
 
-        public void Delete(Guid id)
+        public Task DeleteAsync(Guid id)
         {
             throw new NotImplementedException();
         }

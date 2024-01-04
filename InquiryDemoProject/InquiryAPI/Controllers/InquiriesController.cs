@@ -36,10 +36,10 @@ namespace InquiryAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateNew([FromBody] InquirySaveDTO inquirySaveDTO)
+        public async Task<IActionResult> CreateNew([FromBody] InquirySaveDTO inquirySaveDTO)
         {
             Inquiry inquiry = new(inquirySaveDTO.Type, inquirySaveDTO.Message, _userTokenService.UserId);
-            inquiry = _inquiriesService.Save(inquiry);
+            inquiry = await _inquiriesService.SaveAsync(inquiry);
 
             InquiryDTO inquiryDTO = new()
             {
@@ -63,10 +63,12 @@ namespace InquiryAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<InquiryListItemDTO>> List()
+        public async Task<ActionResult<List<InquiryListItemDTO>>> List()
         {
-            List<InquiryListItemDTO> list = _inquiriesService
-                .Search(new InquirySearchPredicate() { UserId = _userTokenService.UserId })
+            IEnumerable<Inquiry> fetchedItems = await _inquiriesService
+                .SearchAsync(new InquirySearchPredicate() { UserId = _userTokenService.UserId });
+
+            List<InquiryListItemDTO> list = fetchedItems
                 .OrderByDescending(q => q.CreationDate)
                 .Select(q => new InquiryListItemDTO()
                 {

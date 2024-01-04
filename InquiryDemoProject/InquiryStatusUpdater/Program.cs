@@ -26,7 +26,7 @@ namespace InquiryStatusUpdater
             builder.Services.AddControllers();
 
             builder.Services.Configure<AppConfiguration>(builder.Configuration);
-            AppConfiguration config = builder.Configuration.Get<AppConfiguration>();
+            AppConfiguration config = builder.Configuration.Get<AppConfiguration>() ?? throw new NotSupportedException();
             builder.Services.AddSingleton<AppConfiguration>(config);
 
             var key = Encoding.ASCII.GetBytes(config.JwtSecretKey);

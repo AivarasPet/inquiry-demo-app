@@ -21,9 +21,11 @@ namespace Updater.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddNewUser([FromBody] UserDTO userDTO)
+        public async Task<IActionResult> AddNewUser([FromBody] UserDTO userDTO)
         {
-            if (_userService.Search(new UserSearchPredicate() { Username = userDTO.Username }).Any())
+            IEnumerable<User> searchResult = await _userService.SearchAsync(new UserSearchPredicate() { Username = userDTO.Username });
+
+            if (searchResult.Any())
             {
                 throw new NotSupportedException();
             }
@@ -34,7 +36,7 @@ namespace Updater.Controllers
                 Password = userDTO.Password,
             };
 
-            _userService.Save(user);
+            await _userService.SaveAsync(user);
 
             return Ok();
         }
